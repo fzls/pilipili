@@ -1,0 +1,141 @@
+/*
+ * Copyright (c) 2016.
+ * Contact me at fzls.zju@gmail.com [ Chen Ji ]
+ */
+
+body {
+    background-color: #e4e7ee;
+}
+
+.wrap {
+
+}
+
+.content {
+    background-color: white;
+    margin-bottom: 15px;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.img-radius {
+    border-radius: 5px;
+}
+
+.info-item {
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.sec {
+    padding: 5px 7px;
+    background-color: #EEF0F3;
+}
+
+.rec-img {
+    padding: 5px;
+}
+
+.rec-img:hover {
+    border: cyan solid 5px;
+}
+
+.img-spot {
+    width: 49.5%;
+}
+
+.link-black-bold {
+    text-decoration: none;
+    font-weight: bold;
+    color: #000;
+}
+
+.link-black {
+    text-decoration: none;
+    font-weight: bold;
+    color: #000;
+}
+
+.img-user {
+    width: 58px;
+    height: 58px;
+    margin: 5px -5px;
+}
+
+.img-following {
+    width: 18%;
+    margin: 0.5px;
+}
+
+hr {
+    margin: 2px;
+}
+
+.ranking-odd {
+    background-color: #f8f8f8;
+}
+
+.img-full-width {
+    width: 100%;
+}
+
+.pad-zero {
+    padding: 0;
+}
+
+.pad-five {
+    padding: 5px;
+}
+
+.ranking {
+    word-wrap: break-word;
+    padding-bottom: 40px;
+}
+
+.ranking-num {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: #c6c6c6;
+    font-size: 46px;
+    line-height: 1;
+    float: right;
+}
+
+.tag {
+    color: #b8d5e5;
+}
+
+.tag-list {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.form-content {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 20px;
+}
+
+.rec-img {
+    padding: 5px;
+}
+
+.rec-img:hover {
+    border: cyan solid 5px;
+}
+
+.inline-block, ._inline-list li {
+    display: inline-block;
+}
+
+.vertical-center {
+    vertical-align: middle;;
+}
+
+.title {
+    padding: 5px 7px;
+    background-color: #EEF0F3;
+    font-weight: bold;
+    margin-bottom: 5px;
+}

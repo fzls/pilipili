@@ -1,4 +1,9 @@
 <?php
+/**
+ * Copyright (c) 2016. 
+ * Contact me at fzls.zju@gmail.com [ Chen Ji ]
+ */
+
 # validate form data
 require '../util/form_data_validation.php';
 
@@ -30,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     if (empty($email_err) and empty($password_err) and empty($id_err)) {//everything is right
         $conn = new mysqli('localhost', 'root', 'root', 'pilipili');
         // add new user to db
-        $stmt = $conn->prepare("INSERT INTO user(email,password,pilipili_id) VALUES (?,md5(?), ?)");
+        $stmt = $conn->prepare("INSERT INTO user(email,password,pilipili_id,avatar_filepath,custom_background_image_filepath) VALUES (?,md5(?), ?,'../img/default_avatar.jpg','../img/default_background.jpg')");
         $stmt->bind_param('sss', $email, $password, $id);
         $stmt->execute();
         $stmt->close();

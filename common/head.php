@@ -4,6 +4,12 @@
 <script src="../js/bootstrap.js"></script>
 <link rel="shortcut icon" type="image/png" href="../img/favicon.png">
 <link href="../css/bootstrap.css" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="../css/site.css">
+<script>
+    $(document).ready(function () {
+        $("body").tooltip({selector: '[data-toggle=tooltip]'});
+    });
+</script>
 <!--<link href="../css/bootstrap-theme.css" rel="stylesheet" type="text/css"/>-->
 <!--<style>-->
 <!--    /* Sticky footer styles-->

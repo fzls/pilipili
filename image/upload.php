@@ -1,5 +1,10 @@
 <?php
 /**
+ * Copyright (c) 2016. 
+ * Contact me at fzls.zju@gmail.com [ Chen Ji ]
+ */
+
+/**
  * Created by PhpStorm.
  * User: 风之凌殇
  * Date: 6/14/2016
@@ -109,14 +114,6 @@ VALUES ('" . $name . "', '" . $upload_file . "', '" . $filesize . "', '" . $file
             text-align: center;
         }
 
-        .inline-block, ._inline-list li {
-            display: inline-block;
-        }
-
-        .vertical-center {
-            vertical-align: middle;;
-        }
-
         body {
             background-color: #f4f2f4;
         }
@@ -125,12 +122,6 @@ VALUES ('" . $name . "', '" . $upload_file . "', '" . $filesize . "', '" . $file
             padding: 16px 20px;
         }
 
-        .form-content {
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 8px 20px;
-        }
     </style>
 </head>
 <body>

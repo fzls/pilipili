@@ -1,5 +1,10 @@
 <?php
 /**
+ * Copyright (c) 2016. 
+ * Contact me at fzls.zju@gmail.com [ Chen Ji ]
+ */
+
+/**
  * Created by PhpStorm.
  * User: 风之凌殇
  * Date: 6/13/2016
@@ -23,7 +28,7 @@ $conn->query("INSERT INTO image_tag (image_id,tag_id,added_user)
 // formatted it to send back
 
 echo '
-<div style="display: inline-block;"><a href="../search/search.php?mode=tag_full&word=' . $tag_name . '"><span class="glyphicon glyphicon-tag" aria-hidden="true" style="color:#b8d5e5;"></span> ' . $tag_name . '</a></div>
+<div class="inline-block"><a href="../search/search.php?mode=tag_full&word=' . $tag_name . '"><span class="glyphicon glyphicon-tag tag" aria-hidden="true"></span> ' . $tag_name . '</a></div>
     ';
 
 ?>

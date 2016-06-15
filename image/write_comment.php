@@ -1,5 +1,10 @@
 <?php
 /**
+ * Copyright (c) 2016. 
+ * Contact me at fzls.zju@gmail.com [ Chen Ji ]
+ */
+
+/**
  * Created by PhpStorm.
  * User: 风之凌殇
  * Date: 6/13/2016
@@ -22,7 +27,7 @@ $res = $conn->query("SELECT * FROM comment WHERE id=LAST_INSERT_ID()");
 $comment = $res->fetch_assoc();
 
 // add this comment to current page
-$res = $conn->query("SELECT avator_filepath,pilipili_id,id FROM user WHERE id=" . $user_id);
+$res = $conn->query("SELECT avatar_filepath,pilipili_id,id FROM user WHERE id=" . $user_id);
 $comment_user = $res->fetch_assoc();
 $conn->close();
 

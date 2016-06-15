@@ -1,5 +1,10 @@
 <?php
 /**
+ * Copyright (c) 2016. 
+ * Contact me at fzls.zju@gmail.com [ Chen Ji ]
+ */
+
+/**
  * Created by PhpStorm.
  * User: 风之凌殇
  * Date: 6/13/2016
@@ -14,7 +19,7 @@ echo '
 <div class="wrap">
     <div id="' . $div_id . '" class="col-md-12 container-fluid">
         <div class="col-md-2">
-            <img src="' . $comment_user['avator_filepath'] . '" alt="avator of ' . $comment_user['pilipili_id'] . '">
+            <img src="' . $comment_user['avatar_filepath'] . '" alt="avatar of ' . $comment_user['pilipili_id'] . '">
         </div>
         <div class="col-md-10">
             <div id="' . $div_id . '_user_info">

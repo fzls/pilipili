@@ -1,4 +1,9 @@
 <?php
+/**
+ * Copyright (c) 2016. 
+ * Contact me at fzls.zju@gmail.com [ Chen Ji ]
+ */
+
 //    $title : the title of the generated html file
 //    $btn_text : the text of the switch btn( if any) in the top right
 //    $btn_action : the action of clicking the switch btn( if any) in the top right
@@ -54,6 +59,6 @@
     </div>
 </div>
 <!--footer-->
-<?php require '../common/footer.php' ?>
+<?php require '../common/footer_simplify.php' ?>
 </body>
 </html>

@@ -7,6 +7,9 @@ DROP TABLE IF EXISTS comment;
 DROP TABLE IF EXISTS tag_category;
 DROP TABLE IF EXISTS image_tag;
 DROP TABLE IF EXISTS user_tag;
+DROP TABLE IF EXISTS follow;
+DROP TABLE IF EXISTS banner;
+DROP TABLE IF EXISTS ad;
 
 # TODO: add foreign key, and so on
 
@@ -31,8 +34,8 @@ CREATE TABLE user (
   country_visibility               TINYINT,
   city                             NVARCHAR(50),
   city_visibility                  TINYINT,
-  avator_filepath                  NVARCHAR(100),
-  avator_mimetype                  VARCHAR(50),
+  avatar_filepath                  NVARCHAR(100),
+  avatar_mimetype                  VARCHAR(50),
   level                            TINYINT,
   role                             NVARCHAR(50),
   is_premium_member                BOOL,
@@ -43,27 +46,42 @@ CREATE TABLE user (
   prefered_language                NVARCHAR(50),
   registert_imestamp               TIMESTAMP
 );
-INSERT INTO user (pilipili_id, email, password, avator_filepath, custom_background_image_filepath, role)
-VALUES ('Rem', 'Rem@gmail.com', md5('Rem'), '../uploaded_img/avator_mock_1.jpg',
-        '../uploaded_img/detail_background_image_mock_1.jpg',
-        'admin');
-INSERT INTO user (pilipili_id, email, password, avator_filepath, custom_background_image_filepath, role)
-VALUES
-  ('Lem', 'Lem@gmail.com', md5('Lem'), '../uploaded_img/avator_mock_2.jpg',
-   '../uploaded_img/detail_background_image_mock_2.jpg', 'user');
-INSERT INTO user (pilipili_id, email, password, avator_filepath, custom_background_image_filepath, role)
-VALUES
-  ('Emi', 'Emi@gmail.com', md5('Emi'), '../uploaded_img/avator_mock_3.jpg',
-   '../uploaded_img/detail_background_image_mock_3.jpg', 'user');
-INSERT INTO user (pilipili_id, email, password, avator_filepath, custom_background_image_filepath, role)
-VALUES ('Maki', 'Maki@gmail.com', md5('Maki'), '../uploaded_img/avator_mock_4.jpg',
-        '../uploaded_img/detail_background_image_mock_4.jpg',
-        'user');
-INSERT INTO user (pilipili_id, email, password, avator_filepath, custom_background_image_filepath, role)
-VALUES
-  ('fzls', 'fzls.zju@gmail.com', md5('test'), '../uploaded_img/avator_mock_5.jpg',
-   '../uploaded_img/detail_background_image_mock_5.jpg',
-   'user');
+INSERT INTO user (pilipili_id, email, password, avatar_filepath, custom_background_image_filepath, role) VALUES
+  ('Rem', 'Rem@gmail.com', md5('Rem'), '../uploaded_img/avatar_mock_1.jpg',
+   '../uploaded_img/detail_background_image_mock_1.jpg', 'admin'),
+  ('Lem', 'Lem@gmail.com', md5('Lem'), '../uploaded_img/avatar_mock_2.jpg',
+   '../uploaded_img/detail_background_image_mock_2.jpg', 'USER'),
+  ('Emi', 'Emi@gmail.com', md5('Emi'), '../uploaded_img/avatar_mock_3.jpg',
+   '../uploaded_img/detail_background_image_mock_3.jpg', 'USER'),
+  ('Maki', 'Maki@gmail.com', md5('Maki'), '../uploaded_img/avatar_mock_4.jpg',
+   '../uploaded_img/detail_background_image_mock_4.jpg', 'USER'),
+  ('fzls', 'fzls.zju@gmail.com', md5('test'), '../uploaded_img/avatar_mock_5.jpg',
+   '../uploaded_img/detail_background_image_mock_5.jpg', 'USER'),
+  # below is test data for suggested user
+  ('test1', 'test1@gmail.com', md5('test1'), '../uploaded_img/avatar_mock_2.jpg',
+   '../uploaded_img/detail_background_image_mock_2.jpg', 'USER'),
+  ('test2', 'test2@gmail.com', md5('test2'), '../uploaded_img/avatar_mock_3.jpg',
+   '../uploaded_img/detail_background_image_mock_3.jpg', 'USER'),
+  ('test3', 'test3@gmail.com', md5('test3'), '../uploaded_img/avatar_mock_4.jpg',
+   '../uploaded_img/detail_background_image_mock_4.jpg', 'USER'),
+  ('test4', 'test4@gmail.com', md5('test4'), '../uploaded_img/avatar_mock_5.jpg',
+   '../uploaded_img/detail_background_image_mock_5.jpg', 'USER'),
+  ('test5', 'test5@gmail.com', md5('test5'), '../uploaded_img/avatar_mock_2.jpg',
+   '../uploaded_img/detail_background_image_mock_2.jpg', 'USER'),
+  ('test6', 'test6@gmail.com', md5('test6'), '../uploaded_img/avatar_mock_3.jpg',
+   '../uploaded_img/detail_background_image_mock_3.jpg', 'USER'),
+  ('test7', 'test7@gmail.com', md5('test7'), '../uploaded_img/avatar_mock_4.jpg',
+   '../uploaded_img/detail_background_image_mock_4.jpg', 'USER'),
+  ('test8', 'test8@gmail.com', md5('test8'), '../uploaded_img/avatar_mock_5.jpg',
+   '../uploaded_img/detail_background_image_mock_5.jpg', 'USER'),
+  ('test9', 'test9@gmail.com', md5('test9'), '../uploaded_img/avatar_mock_2.jpg',
+   '../uploaded_img/detail_background_image_mock_2.jpg', 'USER'),
+  ('test10', 'test10@gmail.com', md5('test10'), '../uploaded_img/avatar_mock_3.jpg',
+   '../uploaded_img/detail_background_image_mock_3.jpg', 'USER'),
+  ('test11', 'test11@gmail.com', md5('test11'), '../uploaded_img/avatar_mock_4.jpg',
+   '../uploaded_img/detail_background_image_mock_4.jpg', 'USER'),
+  ('test12', 'test12@gmail.com', md5('test12'), '../uploaded_img/avatar_mock_5.jpg',
+   '../uploaded_img/detail_background_image_mock_5.jpg', 'USER');
 
 # images
 CREATE TABLE image (
@@ -88,37 +106,23 @@ CREATE TABLE image (
 );
 
 INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('カントリー！', '../uploaded_img/1.png', 1, 10, 200, 1000, 1024, 768, 1);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('小鸟游六花', '../uploaded_img/2.jpg', 1, 10, 200, 1000, 1024, 768, 2);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('高坂桐乃', '../uploaded_img/3.jpg', 2, 10, 200, 1000, 1024, 768, 1);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('Sky', '../uploaded_img/4.jpg', 2, 10, 200, 1000, 1024, 768, 3);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test5', '../uploaded_img/5.jpg', 3, 10, 200, 1000, 1024, 768, 1);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test6', '../uploaded_img/6.jpg', 3, 10, 200, 1000, 1024, 768, 4);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test01', '../uploaded_img/avator_mock_1.jpg', 3, 10, 200, 1000, 1024, 768, 4);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test02', '../uploaded_img/avator_mock_2.jpg', 3, 10, 200, 1000, 1024, 768, 4);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test03', '../uploaded_img/avator_mock_3.jpg', 3, 10, 200, 1000, 1024, 768, 4);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test04', '../uploaded_img/avator_mock_4.jpg', 3, 10, 200, 1000, 1024, 768, 4);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test05', '../uploaded_img/avator_mock_5.jpg', 3, 10, 200, 1000, 1024, 768, 4);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test06', '../uploaded_img/detail_background_image_mock_1.jpg', 3, 10, 200, 1000, 1024, 768, 4);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test07', '../uploaded_img/detail_background_image_mock_2.jpg', 3, 10, 200, 1000, 1024, 768, 4);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test08', '../uploaded_img/detail_background_image_mock_3.jpg', 3, 10, 200, 1000, 1024, 768, 4);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test09', '../uploaded_img/detail_background_image_mock_4.jpg', 3, 10, 200, 1000, 1024, 768, 4);
-INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
-VALUES ('test10', '../uploaded_img/detail_background_image_mock_5.jpg', 3, 10, 200, 1000, 1024, 768, 4);
+VALUES
+  ('カントリー！', '../uploaded_img/1.png', 1, 10, 200, 1000, 1024, 768, 1),
+  ('小鸟游六花', '../uploaded_img/2.jpg', 1, 10, 200, 1000, 1024, 768, 2),
+  ('高坂桐乃', '../uploaded_img/3.jpg', 2, 10, 200, 1000, 1024, 768, 1),
+  ('Sky', '../uploaded_img/4.jpg', 2, 10, 200, 1000, 1024, 768, 3),
+  ('test5', '../uploaded_img/5.jpg', 3, 10, 200, 1000, 1024, 768, 1),
+  ('test6', '../uploaded_img/6.jpg', 3, 10, 200, 1000, 1024, 768, 4),
+  ('test01', '../uploaded_img/avatar_mock_1.jpg', 3, 10, 2020, 1000, 1024, 768, 4),
+  ('test02', '../uploaded_img/avatar_mock_2.jpg', 3, 10, 200, 1000, 1024, 768, 4),
+  ('test03', '../uploaded_img/avatar_mock_3.jpg', 3, 10, 2300, 1000, 1024, 768, 4),
+  ('test04', '../uploaded_img/avatar_mock_4.jpg', 3, 10, 2100, 1000, 1024, 768, 4),
+  ('test05', '../uploaded_img/avatar_mock_5.jpg', 3, 10, 2004, 1000, 1024, 768, 4),
+  ('test06', '../uploaded_img/detail_background_image_mock_1.jpg', 3, 10, 200, 1000, 1024, 768, 4),
+  ('test07', '../uploaded_img/detail_background_image_mock_2.jpg', 3, 10, 200, 1000, 1024, 768, 4),
+  ('test08', '../uploaded_img/detail_background_image_mock_3.jpg', 3, 10, 200, 1000, 1024, 768, 4),
+  ('test09', '../uploaded_img/detail_background_image_mock_4.jpg', 3, 10, 200, 1000, 1024, 768, 4),
+  ('test10', '../uploaded_img/detail_background_image_mock_5.jpg', 3, 10, 200, 1000, 1024, 768, 4);
 
 # image category
 CREATE TABLE image_category (
@@ -141,12 +145,15 @@ CREATE TABLE comment (
   vote_down           INT,
   vote_count          INT
 );
-INSERT INTO comment (user_id, image_id, content) VALUES (5, 1, '<b>Add comment entity and function</b>');
-INSERT INTO comment (user_id, image_id, content) VALUES (4, 1, '<b>lz你怎么还没做完</b>');
-INSERT INTO comment (user_id, image_id, content) VALUES (3, 1,
-                                                         '喂，离截止日期只有 <h1 style="display: inline-block;">\';$rem = strtotime("2016-6-21") - time();$comment_content.= (ceil($rem / 60 / 60 / 24).\'</h1> 天了\');\'');
-INSERT INTO comment (user_id, image_id, content) VALUES (2, 1, '好喜欢上色(｡･ω･｡)ﾉ♡');
-INSERT INTO comment (user_id, image_id, content) VALUES (1, 1, '好喜欢上色(｡･ω･｡)ﾉ♡(个头啦)');
+INSERT INTO comment (user_id, image_id, content) VALUES
+  (5, 1, ' < b > ADD COMMENT entity AND FUNCTION </b > '),
+  (4, 1, ' < b > lz你怎么还没做完 </b > '),
+  (3, 1, '喂，离截止日期只有 <h1 style="display: inline-block;">\';
+$rem = strtotime("2016-6-21") - TIME ();
+$comment_content.= (ceil($rem/60/60/24).\'</h1> 天了\');
+\''),
+  (2, 1, '好喜欢上色(｡･ω･｡)ﾉ♡'),
+  (1, 1, '好喜欢上色(｡･ω･｡)ﾉ♡(个头啦)');
 
 # tag
 CREATE TABLE tag_category (
@@ -154,18 +161,19 @@ CREATE TABLE tag_category (
   name NVARCHAR(50)
 );
 
-INSERT INTO tag_category (name) VALUES ('Kawai');
-INSERT INTO tag_category (name) VALUES ('Bi-Pool団');
-INSERT INTO tag_category (name) VALUES ('VOCALOID');
-INSERT INTO tag_category (name) VALUES ('miku');
-INSERT INTO tag_category (name) VALUES ('pixivファンタジアFK');
-INSERT INTO tag_category (name) VALUES ('pixivファンタジアNW');
-INSERT INTO tag_category (name) VALUES ('pixivファンタジアSR');
-INSERT INTO tag_category (name) VALUES ('初音ミク');
-INSERT INTO tag_category (name) VALUES ('インダルジェンス_ティーパーティー');
-INSERT INTO tag_category (name) VALUES ('クリック推奨');
-INSERT INTO tag_category (name) VALUES ('ふつくしい');
-INSERT INTO tag_category (name) VALUES ('オリジナル');
+INSERT INTO tag_category (name) VALUES
+  ('Kawai'),
+  ('Bi - Pool団'),
+  ('VOCALOID'),
+  ('miku'),
+  ('pixivファンタジアFK'),
+  ('pixivファンタジアNW'),
+  ('pixivファンタジアSR'),
+  ('初音ミク'),
+  ('インダルジェンス_ティーパーティー'),
+  ('クリック推奨'),
+  ('ふつくしい'),
+  ('オリジナル');
 
 CREATE TABLE image_tag (
   image_id   INT NOT NULL,
@@ -174,39 +182,41 @@ CREATE TABLE image_tag (
   added_time TIMESTAMP
 );
 
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 1);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 2);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 3);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 4);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 5);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 6);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 7);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 8);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 9);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 10);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 11);
-INSERT INTO image_tag (image_id, tag_id) VALUES (1, 12);
-INSERT INTO image_tag (image_id, tag_id) VALUES (2, 1);
-INSERT INTO image_tag (image_id, tag_id) VALUES (2, 2);
-INSERT INTO image_tag (image_id, tag_id) VALUES (2, 3);
+INSERT INTO image_tag (image_id, tag_id) VALUES
+  (1, 1),
+  (1, 2),
+  (1, 3),
+  (1, 4),
+  (1, 5),
+  (1, 6),
+  (1, 7),
+  (1, 8),
+  (1, 9),
+  (1, 10),
+  (1, 11),
+  (1, 12),
+  (2, 1),
+  (2, 2),
+  (2, 3);
 
 CREATE TABLE user_tag (
   user_id INT NOT NULL,
   tag_id  INT NOT NULL
 );
 
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 1);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 2);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 3);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 4);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 5);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 6);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 7);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 8);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 9);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 10);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 11);
-INSERT INTO user_tag (user_id, tag_id) VALUES (1, 12);
+INSERT INTO user_tag (user_id, tag_id) VALUES
+  (1, 1),
+  (1, 2),
+  (1, 3),
+  (1, 4),
+  (1, 5),
+  (1, 6),
+  (1, 7),
+  (1, 8),
+  (1, 9),
+  (1, 10),
+  (1, 11),
+  (1, 12);
 
 # select image.name as image,tag_category.name as tag,user.pilipili_id as user from image,image_tag,tag_category,user
 # WHERE image.id=image_tag.image_id and
@@ -230,3 +240,44 @@ INSERT INTO user_tag (user_id, tag_id) VALUES (1, 12);
 # VALUES ('name', 'filepath', 'filesize', 'filename', 'filetype', ratings, views, author_id, total_score, resolution_height, resolution_width, category_id, 'description', 'browsing_restriction', 'privacy', 'md5_hash');
 
 # SELECT * FROM image_category WHERE id=5;
+
+# follow relation
+CREATE TABLE follow (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  follower_id INT NOT NULL,
+  followee_id INT NOT NULL,
+  follow_time TIMESTAMP
+);
+INSERT INTO follow (follower_id, followee_id) VALUES
+  (1, 2),
+  (1, 3),
+  (1, 4),
+  (1, 5),
+  (2, 3),
+  (2, 4),
+  (2, 5),
+  (3, 4),
+  (3, 5),
+  (4, 5);
+
+# banner in the main page
+CREATE TABLE banner (
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  post_time TIMESTAMP,
+  link      NVARCHAR(200),
+  post_path NVARCHAR(100)
+);
+
+INSERT INTO banner (link, post_path) VALUES
+  ('../image/detail.php?image_id=8', '../uploaded_img/avatar_mock_2.jpg');
+
+# banner in the main page
+CREATE TABLE ad (
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  post_time TIMESTAMP,
+  link      NVARCHAR(200),
+  post_path NVARCHAR(100)
+);
+
+INSERT INTO ad (link, post_path) VALUES
+  ('../image/detail.php?image_id=4', '../uploaded_img/4.jpg');
