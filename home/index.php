@@ -113,9 +113,7 @@ $ad = $conn->query("
     <?php require '../common/head.php' ?>
     <style>
         body {
-            background-color: #e4e7ee;
-            background: url("../tmp_upload/bg.jpg") repeat;
-            background-attachment: fixed;
+            background: #e4e7ee url("../uploaded_img/bg.jpg") repeat fixed;
         }
     </style>
 </head>
@@ -372,7 +370,7 @@ $ad = $conn->query("
 
             <?php
             $top_3 = $conn->query("SELECT * FROM image ORDER BY views DESC LIMIT 3")->fetch_all(MYSQLI_ASSOC);
-            get_leaderboard("Global Rankings", "views", $top_3, $conn);
+            get_leaderboard("Global Most Viewed", "views", $top_3, $conn);
             // fixme: replace with top_3 with corresponding criteria
             $top_3 = $conn->query("
                 SELECT *
@@ -388,10 +386,30 @@ $ad = $conn->query("
                          LIMIT 3
                        ) AS tmp
                 );
-                                    ");
-            get_leaderboard("Daily Rankings", "daily", $top_3, $conn);
-            get_leaderboard("Popularity Rankings [Unimplemented]", "popularity", $top_3, $conn);
-            get_leaderboard("Original Rankings [Unimplemented]", "original", $top_3, $conn);; ?>
+                                    ")->fetch_all(MYSQLI_ASSOC);
+            get_leaderboard("Daily Views Rankings", "daily", $top_3, $conn);
+            $top_3 = $conn->query("SELECT * FROM image ORDER BY ratings DESC,views DESC LIMIT 3")->fetch_all(MYSQLI_ASSOC);
+            get_leaderboard("Global rated Rankings", "popularity", $top_3, $conn);
+            $top_3 = $conn->query("SELECT * FROM image ORDER BY total_score DESC,views DESC LIMIT 3;")->fetch_all(MYSQLI_ASSOC);
+            get_leaderboard("Global Popularity Rankings", "original", $top_3, $conn);;
+            $top_3 = $conn->query("
+                SELECT *
+                FROM image
+                WHERE id IN (
+                    SELECT *
+                    FROM (
+                        SELECT image_id
+                        FROM rate_image_event
+                        WHERE rate_time >= now() - INTERVAL 1 DAY
+                        GROUP BY image_id
+                        ORDER BY count(score) DESC
+                        LIMIT 3
+                    ) AS t
+            );")->fetch_all(MYSQLI_ASSOC);
+            get_leaderboard("Daily Popularity Rankings", "original", $top_3, $conn);; ?>
+
+
+            ?>
         </div>
     </div>
 

@@ -94,6 +94,33 @@ $recommended_images = $conn->query("SELECT * FROM image WHERE id != " . $image_i
         }
     </style>
     <script>
+        function rating() {
+            var score = parseInt(document.getElementById('rating-input').value);
+            if (isNaN(score)) {
+                alert('must input number type');
+                return;
+            }
+            if (score < 0 || score > 10) {
+                alert('score should between 0 and 10 (inclusive)');
+                return;
+            }
+
+            //server update model
+            var xmlhttp = new XMLHttpRequest();
+            var url = 'rating.php';
+            var params = 'score=' + score + '&user_id=<?php echo $current_user['id']?>&image_id=<?php echo $image_id?>';
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    //local update view
+                    document.getElementById('rating-ratings').innerText = parseInt(document.getElementById('rating-ratings').innerText) + 1;
+                    document.getElementById('rating-total-score').innerText = parseInt(document.getElementById('rating-total-score').innerText) + score;
+                }
+            }
+            xmlhttp.open('Post', url, true);
+            xmlhttp.setRequestHeader("content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send(params);
+        }
+
         function add_tag() {
             var tag = document.getElementById('add_tag_input').value;
             if (tag.length == 0) {
@@ -219,9 +246,29 @@ $recommended_images = $conn->query("SELECT * FROM image WHERE id != " . $image_i
                 <?php echo '<div><h1>' . $img['name'] . '</h1></div>' ?>
             </div>
             <div class="col-md-6 text-right">
-                <?php echo '<div>Views: ' . $img['views'] . ' Ratings: ' . $img['ratings'] . ' Total score: ' . $img['total_score'] . '</div>' ?>
-                <!-- TODO: implement rating by JS-->
-                <div><b>here should be a rating implement rating by JS</b></div>
+                <?php echo '<div>Views: ' . $img['views'] . ' Ratings: <span id="rating-ratings">' . $img['ratings'] . '</span> Total score: <span id="rating-total-score">' . $img['total_score'] . '</span> </div>' ?>
+                <!-- fixme: implement rating by JS-->
+                <!--                todo: onload page, use php to check which one to use-->
+                <div id="rating-unrated">
+                    <div>
+                        <div class="col-md-8 col-md-offset-4">
+                            <div class="input-group">
+                                <input class="form-control" placeholder="Score: 0~10" type="number"
+                                       min="0"
+                                       max="10" id="rating-input">
+                                <span class="input-group-btn">
+                                <button onclick="rating()" class="btn btn-info" type="button">
+                                    Rate it
+                                </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div><b>This will be implement rating by JS later</b></div>
+                </div>
+                <div id="rating-rated" style="display: none;">
+                    Your have rated it : 5
+                </div>
             </div>
         </section>
         <div class="col-md-12 container-fluid">

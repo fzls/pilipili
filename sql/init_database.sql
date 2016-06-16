@@ -1,16 +1,19 @@
 CREATE SCHEMA IF NOT EXISTS pilipili;
 USE pilipili;
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS image;
-DROP TABLE IF EXISTS image_category;
+
+DROP TABLE IF EXISTS click_image_event;
+DROP TABLE IF EXISTS rate_image_event;
 DROP TABLE IF EXISTS comment;
-DROP TABLE IF EXISTS tag_category;
 DROP TABLE IF EXISTS image_tag;
 DROP TABLE IF EXISTS user_tag;
+DROP TABLE IF EXISTS tag_category;
 DROP TABLE IF EXISTS follow;
+DROP TABLE IF EXISTS image;
+DROP TABLE IF EXISTS image_category;
+DROP TABLE IF EXISTS user;
+
 DROP TABLE IF EXISTS banner;
 DROP TABLE IF EXISTS ad;
-DROP TABLE IF EXISTS click_image_event;
 
 # TODO: add foreign key, and so on
 
@@ -84,6 +87,16 @@ INSERT INTO user (pilipili_id, email, password, avatar_filepath, custom_backgrou
   ('test12', 'test12@gmail.com', md5('test12'), '../uploaded_img/avatar_mock_5.jpg',
    '../uploaded_img/detail_background_image_mock_5.jpg', 'USER');
 
+# image category
+CREATE TABLE image_category (
+  id   INT AUTO_INCREMENT PRIMARY KEY,
+  name NVARCHAR(50)
+);
+INSERT INTO image_category (name) VALUES ('Original');
+INSERT INTO image_category (name) VALUES ('Illustrations');
+INSERT INTO image_category (name) VALUES ('Manga');
+INSERT INTO image_category (name) VALUES ('Ugoira');
+
 # images
 CREATE TABLE image (
   id                   INT AUTO_INCREMENT PRIMARY KEY,
@@ -99,11 +112,17 @@ CREATE TABLE image (
   upload_time          TIMESTAMP,
   resolution_height    INT,
   resolution_width     INT,
-  category_id          NVARCHAR(50),
+  category_id          INT,
   description          NVARCHAR(500),
   browsing_restriction VARCHAR(20),
   privacy              VARCHAR(20),
-  md5_hash             NVARCHAR(50)
+  md5_hash             NVARCHAR(50),
+  FOREIGN KEY (author_id) REFERENCES user (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (category_id) REFERENCES image_category (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 INSERT INTO image (name, filepath, author_id, ratings, views, total_score, resolution_height, resolution_width, category_id)
@@ -125,15 +144,6 @@ VALUES
   ('test09', '../uploaded_img/detail_background_image_mock_4.jpg', 3, 10, 200, 1000, 1024, 768, 4),
   ('test10', '../uploaded_img/detail_background_image_mock_5.jpg', 3, 10, 200, 1000, 1024, 768, 4);
 
-# image category
-CREATE TABLE image_category (
-  id   INT AUTO_INCREMENT PRIMARY KEY,
-  name NVARCHAR(50)
-);
-INSERT INTO image_category (name) VALUES ('Original');
-INSERT INTO image_category (name) VALUES ('Illustrations');
-INSERT INTO image_category (name) VALUES ('Manga');
-INSERT INTO image_category (name) VALUES ('Ugoira');
 
 CREATE TABLE comment (
   id                  INT AUTO_INCREMENT PRIMARY KEY,
@@ -144,7 +154,16 @@ CREATE TABLE comment (
   reply_to_comment_id INT, #leave for implementing reply to function
   vote_up             INT,
   vote_down           INT,
-  vote_count          INT
+  vote_count          INT,
+  FOREIGN KEY (user_id) REFERENCES user (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (image_id) REFERENCES image (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (reply_to_comment_id) REFERENCES user (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 INSERT INTO comment (user_id, image_id, content) VALUES
   (5, 1, ' < b > ADD COMMENT entity AND FUNCTION </b > '),
@@ -180,7 +199,16 @@ CREATE TABLE image_tag (
   image_id   INT NOT NULL,
   tag_id     INT NOT NULL,
   added_user INT,
-  added_time TIMESTAMP
+  added_time TIMESTAMP,
+  FOREIGN KEY (image_id) REFERENCES image (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (tag_id) REFERENCES tag_category (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (added_user) REFERENCES user (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 INSERT INTO image_tag (image_id, tag_id) VALUES
@@ -202,7 +230,13 @@ INSERT INTO image_tag (image_id, tag_id) VALUES
 
 CREATE TABLE user_tag (
   user_id INT NOT NULL,
-  tag_id  INT NOT NULL
+  tag_id  INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (tag_id) REFERENCES tag_category (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 INSERT INTO user_tag (user_id, tag_id) VALUES
@@ -247,7 +281,13 @@ CREATE TABLE follow (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   follower_id INT NOT NULL,
   followee_id INT NOT NULL,
-  follow_time TIMESTAMP
+  follow_time TIMESTAMP,
+  FOREIGN KEY (follower_id) REFERENCES user (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (followee_id) REFERENCES user (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 INSERT INTO follow (follower_id, followee_id) VALUES
   (1, 2),
@@ -287,7 +327,13 @@ CREATE TABLE click_image_event (
   id         INT AUTO_INCREMENT PRIMARY KEY,
   user_id    INT,
   image_id   INT,
-  click_time TIMESTAMP
+  click_time TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES user (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (image_id) REFERENCES image (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 # SELECT *
@@ -303,3 +349,38 @@ CREATE TABLE click_image_event (
 #          LIMIT 3
 #        ) AS tmp
 # );
+CREATE TABLE rate_image_event (
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  user_id   INT,
+  image_id  INT,
+  score     INT,
+  rate_time TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES user (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (image_id) REFERENCES image (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+SELECT *
+FROM image
+ORDER BY total_score DESC, views DESC
+LIMIT 3;
+SELECT *
+FROM image
+ORDER BY ratings DESC, views DESC
+LIMIT 3;
+
+SELECT *
+FROM image
+WHERE id IN (
+  SELECT *
+  FROM (
+         SELECT image_id
+         FROM rate_image_event
+         GROUP BY image_id
+         ORDER BY count(score) DESC
+         LIMIT 3
+       ) AS t
+);
