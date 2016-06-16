@@ -114,6 +114,9 @@ $recommended_images = $conn->query("SELECT * FROM image WHERE id != " . $image_i
                     //local update view
                     document.getElementById('rating-ratings').innerText = parseInt(document.getElementById('rating-ratings').innerText) + 1;
                     document.getElementById('rating-total-score').innerText = parseInt(document.getElementById('rating-total-score').innerText) + score;
+                    document.getElementById('rating-unrated').style = 'display: none;';
+                    document.getElementById('rating-rated').style = 'display: block;';
+                    document.getElementById('rating-rated').innerHTML = 'Your have rated it : ' + score;
                 }
             }
             xmlhttp.open('Post', url, true);
@@ -249,7 +252,15 @@ $recommended_images = $conn->query("SELECT * FROM image WHERE id != " . $image_i
                 <?php echo '<div>Views: ' . $img['views'] . ' Ratings: <span id="rating-ratings">' . $img['ratings'] . '</span> Total score: <span id="rating-total-score">' . $img['total_score'] . '</span> </div>' ?>
                 <!-- fixme: implement rating by JS-->
                 <!--                todo: onload page, use php to check which one to use-->
-                <div id="rating-unrated">
+                <?php
+                $res = $conn->query("SELECT * FROM rate_image_event WHERE user_id=" . $current_user['id'] . " AND image_id=" . $image_id);
+                $rated = $res->fetch_assoc();
+                ?>
+
+                <div id="rating-unrated"<?php if ($res->num_rows != 0) echo ' style="display:none"'; ?>>
+                    <?php
+                    if ($res->num_rows == 0) {
+                        echo '
                     <div>
                         <div class="col-md-8 col-md-offset-4">
                             <div class="input-group">
@@ -265,9 +276,16 @@ $recommended_images = $conn->query("SELECT * FROM image WHERE id != " . $image_i
                         </div>
                     </div>
                     <div><b>This will be implement rating by JS later</b></div>
+                    ';
+                    }
+                    ?>
                 </div>
-                <div id="rating-rated" style="display: none;">
-                    Your have rated it : 5
+                <div id="rating-rated"<?php if ($res->num_rows == 0) echo ' style="display:none"'; ?>>
+                    <?php
+                    if ($res->num_rows != 0) {
+                        echo 'Your have rated it : ' . $rated['score'];
+                    };
+                    ?>
                 </div>
             </div>
         </section>
