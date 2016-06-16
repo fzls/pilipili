@@ -8,9 +8,13 @@ require '../common/check_loged_in.php'; ?>
 <?php
 // input: $img_id  the id of the image to display
 $display_desc = true;
+$click_by_user = true;
 if (isset($_GET['image_id']) and null !== filter_input(INPUT_GET, 'image_id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))
     $image_id = $_GET['image_id'];
-if (!isset($image_id)) $image_id = 1;//TODO: for test only
+if (!isset($image_id)) {
+    $image_id = 1;
+    $click_by_user = false;
+}//TODO: for test only
 // for simplicity of codes, now not use prepared procedure
 $conn = new mysqli('localhost', 'root', 'root', 'pilipili');
 $conn->set_charset('utf8');
@@ -18,6 +22,12 @@ $conn->set_charset('utf8');
 //fetch current user
 $current_user = $_SESSION['current_user'];
 
+// record click event and increment the image's views by one
+// fixme: for test, now do not filter the occasion when the same user click this link multiple times
+if ($click_by_user) {
+    $conn->query("INSERT INTO click_image_event(user_id,image_id) VALUES (" . $current_user['id'] . "," . $image_id . ")");
+    $conn->query("UPDATE image SET views = views+1 WHERE id=" . $image_id);
+}
 // fetch image info
 $res = $conn->query("SELECT * FROM image WHERE id=" . $image_id);
 if ($res->num_rows == 0) die("no such image exists");
@@ -29,9 +39,17 @@ if ($res->num_rows == 0) die("author not exists");
 $author = $res->fetch_assoc();
 
 // fetch author's work's tags
-$author_images_tags = $conn->query("SELECT tag_category.name,tag_category.id,count(*) AS count FROM image,image_tag,tag_category
-WHERE image.author_id = " . $author['id'] . " AND image.id=image_tag.image_id AND tag_category.id=image_tag.tag_id
-GROUP BY tag_category.name,tag_category.id;")->fetch_all(MYSQLI_ASSOC);
+$author_images_tags = $conn->query("
+    SELECT
+      tag_category.name,
+      tag_category.id,
+      count(*) AS count
+    FROM image, image_tag, tag_category
+    WHERE image.author_id = " . $author['id'] . " 
+          AND image.id = image_tag.image_id 
+          AND tag_category.id = image_tag.tag_id
+    GROUP BY tag_category.name, tag_category.id;
+")->fetch_all(MYSQLI_ASSOC);
 
 // fetch category
 $res = $conn->query("SELECT * FROM image_category WHERE id=" . $img['category_id']);

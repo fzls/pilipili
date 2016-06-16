@@ -15,32 +15,94 @@ $conn->set_charset('utf8');
 $current_user = $_SESSION['current_user'];
 
 # fetch followings from db
-$followings = $conn->query("SELECT user.id,pilipili_id,avatar_filepath FROM follow,user WHERE followee_id=user.id AND follower_id=" . $current_user['id'])->fetch_all(MYSQLI_ASSOC);
+$followings = $conn->query("
+    SELECT
+      user.id,
+      pilipili_id,
+      avatar_filepath
+    FROM follow, user
+    WHERE followee_id = user.id AND follower_id =" . $current_user['id']
+)->fetch_all(MYSQLI_ASSOC);
 
 # fetch suggested user
 # fixme : do it with by tags or some algo to find out the similiar user or users that cu may fond of
-$suggested_users = $conn->query("SELECT * FROM user WHERE id!=" . $current_user['id'] . " AND id NOT IN (SELECT user.id FROM user,follow WHERE followee_id=user.id AND follower_id=" . $current_user['id'] . ")  ORDER BY rand() LIMIT 10")->fetch_all(MYSQLI_ASSOC);
+$suggested_users = $conn->query("
+    SELECT *
+    FROM user
+    WHERE id != " . $current_user['id'] . "
+          AND id NOT IN (
+      SELECT user.id
+      FROM user, follow
+      WHERE followee_id = user.id AND
+            follower_id = " . $current_user['id'] . "
+    )
+    ORDER BY rand()
+    LIMIT 10 
+")->fetch_all(MYSQLI_ASSOC);
 
 # fetch banner
-$banner = $conn->query("SELECT * FROM banner ORDER BY id DESC LIMIT 1")->fetch_assoc();
+$banner = $conn->query("
+    SELECT *
+    FROM banner
+    ORDER BY id DESC
+    LIMIT 1
+")->fetch_assoc();
 
 # fetch spot light
-$spot_lights = $conn->query("SELECT * FROM image ORDER BY views DESC LIMIT 4")->fetch_all(MYSQLI_ASSOC);
+$spot_lights = $conn->query("
+    SELECT *
+    FROM image
+    ORDER BY views DESC
+    LIMIT 4
+")->fetch_all(MYSQLI_ASSOC);
 
 #fetch new work from any body
-$new_work_everyone = $conn->query("SELECT * FROM image ORDER BY id DESC LIMIT 6")->fetch_all(MYSQLI_ASSOC);
+$new_work_everyone = $conn->query("
+    SELECT *
+    FROM image
+    ORDER BY id DESC
+    LIMIT 6
+")->fetch_all(MYSQLI_ASSOC);
 
 # fetch favorites tags
-$favorites_tags = $conn->query("SELECT * FROM user_tag,tag_category WHERE tag_id=id AND user_id=" . $current_user['id'])->fetch_all(MYSQLI_ASSOC);
+$favorites_tags = $conn->query("
+    SELECT *
+    FROM user_tag, tag_category
+    WHERE tag_id = id AND user_id =" . $current_user['id']
+)->fetch_all(MYSQLI_ASSOC);
 
 # fetch frequent tags
-$frequent_tags = $conn->query("SELECT name,id FROM tag_category,image_tag WHERE id=tag_id GROUP BY id ORDER BY count(*) DESC LIMIT 8 ")->fetch_all(MYSQLI_ASSOC);
+$frequent_tags = $conn->query("
+    SELECT
+      name,
+      id
+    FROM tag_category, image_tag
+    WHERE id = tag_id
+    GROUP BY id
+    ORDER BY count(*) DESC
+    LIMIT 8 
+")->fetch_all(MYSQLI_ASSOC);
 
 # fetch new work from users followed by cu
-$new_work_following = $conn->query("SELECT * FROM image WHERE author_id IN(SELECT followee_id FROM follow WHERE follower_id=" . $current_user['id'] . " ) ORDER BY id DESC LIMIT 6")->fetch_all(MYSQLI_ASSOC);
+$new_work_following = $conn->query("
+    SELECT *
+    FROM image
+    WHERE author_id IN (
+      SELECT followee_id
+      FROM follow
+      WHERE follower_id = " . $current_user['id'] . "
+    )
+    ORDER BY id DESC
+    LIMIT 6
+")->fetch_all(MYSQLI_ASSOC);
 
 # fetch ad
-$ad = $conn->query("SELECT * FROM ad ORDER BY id DESC LIMIT 1")->fetch_assoc();
+$ad = $conn->query("
+    SELECT *
+    FROM ad
+    ORDER BY id DESC
+    LIMIT 1
+")->fetch_assoc();
 
 ?>
 <!DOCTYPE html>
@@ -278,159 +340,58 @@ $ad = $conn->query("SELECT * FROM ad ORDER BY id DESC LIMIT 1")->fetch_assoc();
             </div>
 
             <!--            TODO: make all these ranking into one template(with some params)-->
-            <div class="content">
-                <div class="sec"><a class="link-black" href="#">Global Rankings</a></div>
-                <div class="ranking ranking-odd container-fluid pad-zero">
+            <?php
+            function get_leaderboard($title, $ranking_criteria, $top_3, $conn)
+            {
+                echo '<div class="content">';
+                echo '<div class="sec"><a class="link-black" href="../ranking/ranking.php?criteria=' . $ranking_criteria . '">' . $title . '</a></div>';
+                foreach ($top_3 as $index => $image) {
+                    //index is 0,1,2 so 0 and 2 is the odd one
+                    $pilipili_id = $conn->query("SELECT pilipili_id FROM user WHERE id=" . $image['author_id'])->fetch_assoc()['pilipili_id'];
+                    echo '
+                <div class="ranking ' . ($index % 2 === 0 ? 'ranking-odd' : '') . ' container-fluid pad-zero">
                     <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_1.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
+                         <a href="../image/detail.php?image_id=' . $image['id'] . '">'
+                        .
+                        '<img src="' . $image['filepath'] . '" alt="' . $image['name'] . '" class="img-full-width">'
+                        .
+                        '</a>
                     </div>
                     <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">1</div>
+                        <div><a href="../image/detail.php?image_id=' . $image['id'] . '">' . $image['name'] . '</a></div>
+                        <div>By <a href="../user/member.php?id=' . $image['author_id'] . '">' . $pilipili_id . '</a></div>
+                        <div class="ranking-num">' . ($index + 1) . '</div>
                     </div>
                 </div>
-                <div class="ranking container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_2.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">2</div>
-                    </div>
-                </div>
-                <div class="ranking ranking-odd container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_1.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">3</div>
-                    </div>
-                </div>
-                <div class="text-right"><a href="#">View more</a></div>
-            </div>
+                    ';
+                }
+                echo '</div>';
+            }
 
-            <div class="content">
-                <div class="sec"><a class="link-black" href="#">Daily Rankings</a></div>
-                <div class="ranking ranking-odd container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_1.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">1</div>
-                    </div>
-                </div>
-                <div class="ranking container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_2.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">2</div>
-                    </div>
-                </div>
-                <div class="ranking ranking-odd container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_1.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">3</div>
-                    </div>
-                </div>
-                <div class="text-right"><a href="#">View more</a></div>
-            </div>
+            ; ?>
 
-            <div class="content">
-                <div class="sec"><a class="link-black" href="#">Popularity Rankings</a></div>
-                <div class="ranking ranking-odd container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_1.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">1</div>
-                    </div>
-                </div>
-                <div class="ranking container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_2.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">2</div>
-                    </div>
-                </div>
-                <div class="ranking ranking-odd container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_1.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">3</div>
-                    </div>
-                </div>
-                <div class="text-right"><a href="#">View more</a></div>
-            </div>
-
-
-            <div class="content">
-                <div class="sec"><a class="link-black" href="#">Original Rankings</a></div>
-                <div class="ranking ranking-odd container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_1.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">1</div>
-                    </div>
-                </div>
-                <div class="ranking container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_2.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">2</div>
-                    </div>
-                </div>
-                <div class="ranking ranking-odd container-fluid pad-zero">
-                    <div class="col-md-6 pad-five">
-                        <img src="../uploaded_img/other_work_1.jpg" alt="work-name-here:TODO"
-                             class="img-full-width">
-                    </div>
-                    <div class="col-md-6" style="vertical-align: top;">
-                        <div><a href="#">Title</a></div>
-                        <div>By <a href="#">Author</a></div>
-                        <div class="ranking-num">3</div>
-                    </div>
-                </div>
-                <div class="text-right"><a href="#">View more</a></div>
-            </div>
-
+            <?php
+            $top_3 = $conn->query("SELECT * FROM image ORDER BY views DESC LIMIT 3")->fetch_all(MYSQLI_ASSOC);
+            get_leaderboard("Global Rankings", "views", $top_3, $conn);
+            // fixme: replace with top_3 with corresponding criteria
+            $top_3 = $conn->query("
+                SELECT *
+                FROM image
+                WHERE id IN (
+                  SELECT *
+                  FROM (
+                         SELECT image_id
+                         FROM click_image_event
+                         WHERE click_time >= now() - INTERVAL 1 DAY
+                         GROUP BY image_id
+                         ORDER BY count(*) DESC
+                         LIMIT 3
+                       ) AS tmp
+                );
+                                    ");
+            get_leaderboard("Daily Rankings", "daily", $top_3, $conn);
+            get_leaderboard("Popularity Rankings [Unimplemented]", "popularity", $top_3, $conn);
+            get_leaderboard("Original Rankings [Unimplemented]", "original", $top_3, $conn);; ?>
         </div>
     </div>
 

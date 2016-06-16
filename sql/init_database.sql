@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS user_tag;
 DROP TABLE IF EXISTS follow;
 DROP TABLE IF EXISTS banner;
 DROP TABLE IF EXISTS ad;
+DROP TABLE IF EXISTS click_image_event;
 
 # TODO: add foreign key, and so on
 
@@ -281,3 +282,24 @@ CREATE TABLE ad (
 
 INSERT INTO ad (link, post_path) VALUES
   ('../image/detail.php?image_id=4', '../uploaded_img/4.jpg');
+
+CREATE TABLE click_image_event (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  user_id    INT,
+  image_id   INT,
+  click_time TIMESTAMP
+);
+
+# SELECT *
+# FROM image
+# WHERE id IN (
+#   SELECT *
+#   FROM (
+#          SELECT image_id
+#          FROM click_image_event
+#          WHERE click_time >= now() - INTERVAL 1 DAY
+#          GROUP BY image_id
+#          ORDER BY count(*) DESC
+#          LIMIT 3
+#        ) AS tmp
+# );
