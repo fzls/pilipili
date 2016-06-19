@@ -48,7 +48,7 @@ CREATE TABLE user (
   custom_background_image_filepath NVARCHAR(100),
   custom_background_image_mimetype VARCHAR(50),
   prefered_language                NVARCHAR(50),
-  registert_imestamp               TIMESTAMP
+  registert_timestamp              TIMESTAMP
 );
 INSERT INTO user (pilipili_id, email, password, avatar_filepath, custom_background_image_filepath, role) VALUES
   ('Rem', 'Rem@gmail.com', md5('Rem'), '../uploaded_img/avatar_mock_1.jpg',
@@ -147,10 +147,10 @@ VALUES
 
 CREATE TABLE comment (
   id                  INT AUTO_INCREMENT PRIMARY KEY,
-  user_id             INT NOT NULL,
-  image_id            INT NOT NULL,
+  user_id             INT           NOT NULL,
+  image_id            INT           NOT NULL,
   post_time           TIMESTAMP,
-  content             NVARCHAR(500),
+  content             NVARCHAR(500) NOT NULL,
   reply_to_comment_id INT, #leave for implementing reply to function
   vote_up             INT,
   vote_down           INT,
@@ -165,6 +165,7 @@ CREATE TABLE comment (
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
+
 INSERT INTO comment (user_id, image_id, content) VALUES
   (5, 1, ' < b > ADD COMMENT entity AND FUNCTION </b > '),
   (4, 1, ' < b > lz你怎么还没做完 </b > '),
@@ -210,6 +211,7 @@ CREATE TABLE image_tag (
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
+
 
 INSERT INTO image_tag (image_id, tag_id) VALUES
   (1, 1),
@@ -289,6 +291,8 @@ CREATE TABLE follow (
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
+
+
 INSERT INTO follow (follower_id, followee_id) VALUES
   (1, 2),
   (1, 3),
@@ -308,6 +312,7 @@ CREATE TABLE banner (
   link      NVARCHAR(200),
   post_path NVARCHAR(100)
 );
+
 
 INSERT INTO banner (link, post_path) VALUES
   ('../image/detail.php?image_id=8', '../uploaded_img/avatar_mock_2.jpg');
@@ -363,6 +368,7 @@ CREATE TABLE rate_image_event (
     ON DELETE CASCADE
 );
 
+
 SELECT *
 FROM image
 ORDER BY total_score DESC, views DESC
@@ -384,3 +390,5 @@ WHERE id IN (
          LIMIT 3
        ) AS t
 );
+
+# select * from image ORDER BY id LIMIT 5,1;

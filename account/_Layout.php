@@ -17,16 +17,43 @@
     <?php require 'head.php' ?>
     <style>
         body {
-            background: url("../img/<?php echo isset($background_image)?$background_image:'login_or_signup.jpg';?>") no-repeat;
+            background-image: url("../img/<?php echo isset($background_image)?$background_image:'login_or_signup.jpg';?>");
+            background-repeat: no-repeat;
             background-size: cover;
         }
+
     </style>
+    <script>
+        function change_background(index) {
+            var ajax = new XMLHttpRequest();
+            var url = "change_background.php";
+            ajax.onreadystatechange = function () {
+                if (ajax.readyState == 4 && ajax.status == 200) {
+                    var new_bg = ajax.responseText;
+                    document.body.style = 'background-image: url("' + new_bg + '");background-repeat: no-repeat;background-size: cover;transition: background-image 0.5s linear;';
+                    setTimeout(function () {
+                        change_background();
+                    }, 5000);
+                }
+            }
+            ajax.open('get', url, true);
+            ajax.send();
+        }
+        window.onload = function () {
+            change_background();
+            var bgm = document.getElementById('bgm');
+            bgm.volume = 0.3;
+        }
+    </script>
 </head>
 <body>
 <div>
     <?php require 'switch_btn.php';
     if (isset($btn_text) and isset($btn_action)) put_switch_btn($btn_text, $btn_action); ?>
     <div class="container">
+        <audio id="bgm" src="../music/佐倉綾音 - Daydream café ~ご注文はココアですか？ ver.~.mp3" loop autoplay="autoplay">
+            <p>If you are reading this, it is because your browser does not support the audio element.</p>
+        </audio>
         <div class="login-form-wrapper">
             <div style="padding-bottom: 50px;">
                 <img src="../img/logo.png" alt="pilipili" style="height: 70px;"/> <br/>

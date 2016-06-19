@@ -78,7 +78,7 @@ $frequent_tags = $conn->query("
       id
     FROM tag_category, image_tag
     WHERE id = tag_id
-    GROUP BY id
+    GROUP BY name,id
     ORDER BY count(*) DESC
     LIMIT 8 
 ")->fetch_all(MYSQLI_ASSOC);

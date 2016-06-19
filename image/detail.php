@@ -365,12 +365,12 @@ $recommended_images = $conn->query("SELECT * FROM image WHERE id != " . $image_i
             ';
         }
         ?>
-        <!--            <div class="content"><a href="#"><img src="../img/recommendation_mock_1.jpg" alt="rec1"-->
-        <!--                                                  class="rec-img"></a></div>-->
-        <!--            <div class="content"><a href="#"><img src="../img/recommendation_mock_2.jpg" alt="rec1"-->
-        <!--                                                  class="rec-img"></a></div>-->
-        <!--            <div class="content"><a href="#"><img src="../img/recommendation_mock_3.jpg" alt="rec1"-->
-        <!--                                                  class="rec-img"></a></div>-->
+        <!--        <div class="content"><a href="#"><img src="../uploaded_img/recommendation_mock_1.jpg" alt="rec1"-->
+        <!--                                              class="rec-img"></a></div>-->
+        <!--        <div class="content"><a href="#"><img src="../uploaded_img/recommendation_mock_2.jpg" alt="rec1"-->
+        <!--                                              class="rec-img"></a></div>-->
+        <!--        <div class="content"><a href="#"><img src="../uploaded_img/recommendation_mock_3.jpg" alt="rec1"-->
+        <!--                                              class="rec-img"></a></div>-->
     </div>
 </div>
 <?php require '../common/footer.php' ?>
