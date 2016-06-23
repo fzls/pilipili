@@ -13,7 +13,8 @@
 require '../common/check_loged_in.php';
 require '../util/add_button_width_with_nbsp.php';
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $conn = new mysqli('localhost', 'root', 'root', 'pilipili');
+    require_once '../common/connect_db.php';
+    $conn = connect_db();
     //TODO : validate user input
     $name = $_POST['title'];
     $ratings = $views = $total_score = 0;

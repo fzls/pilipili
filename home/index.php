@@ -8,8 +8,9 @@ require '../common/check_loged_in.php'; ?>
 <?php
 //TODO:spot light by ranking
 //fixme: at the actual spot light, that is delivered by site later
-$conn = new mysqli('localhost', 'root', 'root', 'pilipili');
-$conn->set_charset('utf8');
+
+require_once '../common/connect_db.php';
+$conn = connect_db();
 
 # fetch user from session
 $current_user = $_SESSION['current_user'];

@@ -33,12 +33,11 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
         $id = censor_input($_POST['id']);
     }
     if (empty($email_err) and empty($password_err) and empty($id_err)) {//everything is right
-        $conn = new mysqli('localhost', 'root', 'root', 'pilipili');
+        require_once '../common/connect_db.php';
+        $conn = connect_db();
         // add new user to db
-        $stmt = $conn->prepare("INSERT INTO user(email,password,pilipili_id,avatar_filepath,custom_background_image_filepath) VALUES (?,md5(?), ?,'../img/default_avatar.jpg','../img/default_background.jpg')");
-        $stmt->bind_param('sss', $email, $password, $id);
-        $stmt->execute();
-        $stmt->close();
+        $conn->query("INSERT INTO user(email,password,pilipili_id,avatar_filepath,custom_background_image_filepath) 
+VALUES ('" . $email . "',md5('" . $password . "'), '" . $id . "','../img/default_avatar.jpg','../img/default_background.jpg')");
 
         //fetch user from db
         $res = $conn->query("SELECT * FROM user WHERE pilipili_id='" . $id . "'");

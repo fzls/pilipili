@@ -11,7 +11,8 @@
  * Time: 10:17 AM
  */
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $conn = new mysqli('localhost', 'root', 'root', 'pilipili');
+    require_once '../common/connect_db.php';
+    $conn = connect_db();
     $bg = $conn->query("SELECT * FROM image ORDER BY rand() LIMIT 1")->fetch_assoc()['filepath'];
     echo $bg;
 }

@@ -16,8 +16,9 @@ if (!isset($image_id)) {
     $click_by_user = false;
 }//TODO: for test only
 // for simplicity of codes, now not use prepared procedure
-$conn = new mysqli('localhost', 'root', 'root', 'pilipili');
-$conn->set_charset('utf8');
+
+require_once '../common/connect_db.php';
+$conn = connect_db();
 
 //fetch current user
 $current_user = $_SESSION['current_user'];

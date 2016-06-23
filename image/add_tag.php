@@ -16,7 +16,8 @@ $added_user = censor_input($_POST['added_user']);
 $image_id = censor_input($_POST['image_id']);
 $tag_name = censor_input($_POST['tag_name']);
 
-$conn = new mysqli('localhost', 'root', 'root', 'pilipili');
+require_once '../common/connect_db.php';
+$conn = connect_db();
 // if tag not exist, insert it into tag categrty
 $res = $conn->query("SELECT * FROM tag_category WHERE name='" . $tag_name . "'");
 if ($res->num_rows == 0) {

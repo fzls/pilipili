@@ -16,8 +16,8 @@ $user_id = censor_input($_POST['user_id']);
 $image_id = censor_input($_POST['image_id']);
 $content = censor_input($_POST['content']);
 // connect to db
-$conn = new mysqli('localhost', 'root', 'root', 'pilipili');
-$conn->set_charset('utf8');
+require_once '../common/connect_db.php';
+$conn = connect_db();
 
 // add to database
 $conn->query("INSERT INTO comment (user_id,image_id,content) VALUES (" . $user_id . "," . $image_id . ",'" . $conn->real_escape_string($content) . "');");

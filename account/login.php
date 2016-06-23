@@ -1,4 +1,9 @@
 <?php
+/**
+ * Copyright (c) 2016. 
+ * Contact me at fzls.zju@gmail.com [ Chen Ji ]
+ */
+
 # validate form data
 require '../util/form_data_validation.php';
 
@@ -20,12 +25,9 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 
     //check if password and user is matched
     if (empty($email_or_id_err) and empty($password_err)) {//everything is right
-        $conn = new mysqli('localhost', 'root', 'root', 'pilipili');
-        $stmt = $conn->prepare("SELECT * FROM user WHERE (email=? OR pilipili_id=?)AND password=md5(?)");
-        $stmt->bind_param('sss', $email_or_id, $email_or_id, $password);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        $stmt->close();
+        require_once '../common/connect_db.php';
+        $conn = connect_db();
+        $res = $conn->query("SELECT * FROM user WHERE (email='" . $email_or_id . "' OR pilipili_id='" . $email_or_id . "')AND password=md5('" . $password . "')");
         // close db connection
         $conn->close();
         // if login successfully, redirect to homepage
